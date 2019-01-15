@@ -1,0 +1,25 @@
+{
+  "name": "select-fyp",
+  "version": "0.0.8",
+  "description": "sElect FYP",
+  "main": "webserver.js",
+  "scripts": {
+    "start": "concurrently -k \"node webserver.js\" \"node trustee.js\" \"node tally.js\"",
+    "dev": "concurrently -k \"nodemon webserver.js\" \"nodemon trustee.js\" \"nodemon tally.js\""
+  },
+  "author": "Mohammed Mardini",
+  "license": "Apache License, Version 2.0",
+  "dependencies": {
+    "bcrypt": "^3.0.2",
+    "concurrently": "^4.0.1",
+    "cryptr": "^4.0.0",
+    "express": "^4.16.3",
+    "express-handlebars": "^3.0.0",
+    "mysql": "^2.16.0",
+    "nodemailer": "^4.6.8",
+    "paillier-js": "^0.9.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  }
+}

@@ -1,0 +1,99 @@
+<h1>Create Election</h1>
+<form class="form" onsubmit="return false" id="election">
+    <input type="text" placeholder="Election name" id="electionName" required>
+    <input type="email" placeholder="Your Email Address" id="emailaddress" required>
+    <input type="text" placeholder="Voter's Email Addresses" id="recipients" required>
+    <input type="password" placeholder="Password" id="password" required>
+    <input type="text" placeholder="Question" id="voteQuestion" required>
+    <input type="text" placeholder="First Option" id="option0" required>
+    <input type="text" placeholder="Second Option" id="option1" required>
+    <input placeholder="Start Date" type="date" id="start" required>
+    <input placeholder="End Date" type="date" id="end" required>
+    <button type="submit" id="create">Submit</button>
+    <a href="/">
+        <p>Take me home</p>
+    </a>
+</form>
+
+<ul class = "fadeout"></ul>
+
+
+<script>
+    function fadeOut() {
+        console.log("1")
+        $(".fadeout").fadeToggle(500, "swing", function () {
+        document.getElementById("create").disabled = false;
+            this.innerHTML = ""
+        });
+    }
+    window.onload = function () {
+        let counter = 0;
+        let today = new Date(Date.now());
+        let tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+
+        let dateFormatToday = today.getFullYear() + "-" + ((today.getMonth() + 1) >= 10 ? today.getMonth() + 1 : "0" + (today.getMonth() + 1)) + "-" + (today.getDate() >= 10 ? today.getDate() : "0" + today.getDate());
+        let dateFormatTomorrow = tomorrow.getFullYear() + "-" + ((tomorrow.getMonth() + 1) >= 10 ? tomorrow.getMonth() + 1 : "0" + (tomorrow.getMonth() + 1)) + "-" + (tomorrow.getDate() >= 10 ? tomorrow.getDate() : "0" + tomorrow.getDate());
+        $("#start").attr("min", dateFormatToday);
+        $("#start").attr("value", dateFormatToday);
+        $("#end").attr("min", dateFormatTomorrow);
+        $("#end").attr("value", dateFormatTomorrow);
+        $("#create").click(function () {
+            let electionName = $("#electionName").val(),
+                emailAddress = $("#emailaddress").val(),
+                startTime = $("#start").val(),
+                endTime = $("#end").val(),
+                pollQuestion = $("#voteQuestion").val(),
+                option0 = $("#option0").val(),
+                option1 = $("#option1").val(),
+                recipients = $("#recipients").val(),
+                password = $("#password").val(),
+                date = new Date(startTime) <= new Date(endTime)
+            let regex = {
+                electionNameRegex: /^[a-zA-Z\s]+$/g,
+                emailAddressRegex: /^[\w\.-]+@[a-z]+(\.[a-z]+){1,2}$/g,
+                pollQuestionRegex: /^[a-zA-Z\s]+\??$/g,
+                optionsRegex: /^[a-zA-Z\s]+$/g,
+                recipientsRegex: /^([\w\.-]+@[a-z]+(\.[a-z]+){1,2};)+$/g,
+                passwordRegex: /^.{7,16}$/g,
+            }
+
+
+
+
+            if (document.getElementById("election").checkValidity() && date && electionName.match(regex.electionNameRegex) && emailAddress.match(regex.emailAddressRegex) &&
+                pollQuestion.match(regex.pollQuestionRegex) && option0.match(regex.optionsRegex) && option1.match(regex.optionsRegex) && recipients.match(regex.recipientsRegex) && password.match(regex.passwordRegex)) {
+                $.post("/election/add", {
+                    "electionName": electionName,
+                    "email": emailAddress,
+                    "question": pollQuestion,
+                    "option0": option0,
+                    "option1": option1,
+                    "startdate": startTime,
+                    "enddate": endTime,
+                    "password": password,
+                    "recipients": recipients
+                }, function (res, status) {
+                    $("#create").attr("disabled", "disabled")
+                    if (status == "success")
+                        window.location.href = "/thankyou/e";
+                    else
+                        window.location.href = "/error";
+                })
+            } else {
+                $("#create").attr("disabled", "disabled")
+                let ul = document.querySelector("ul")
+                ul.setAttribute("style","display : block; opacity: 255;")
+                var stringArray = ["Election name should one or more words", "Email must be only numbers, letters,.,-,_", "Poll question must be letters only and one question mark", "Options should one or more words", "Password must be between 7 and 16 characters", "Recipients must be emails seperated by a \";\""]
+                for (var i = 0; i < 6; i++) {
+                    let li = document.createElement("li");
+                    li.innerHTML = stringArray[i];
+                    ul.appendChild(li);
+
+                }
+                setTimeout(fadeOut, 5000);
+
+
+            }
+        })
+    }
+</script>

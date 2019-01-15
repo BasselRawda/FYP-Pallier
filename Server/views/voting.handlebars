@@ -1,0 +1,37 @@
+<h1 id="electionName">{{electionName}}</h1>
+<h4 class="choice">{{question}}</h4>
+<form>
+    {{#if electionName}}
+    <p>
+        <label>
+            <input name="opt-radio" type="radio" value="0" checked />
+            <span class="choice">{{option0}}</span>
+        </label>
+    </p>
+    <p>
+        <label>
+            <input name="opt-radio" type="radio" value="1" />
+            <span class="choice">{{option1}}</span>
+        </label>
+    </p>
+    <button type="submit" id="confirm">Confirm</button>
+    <a href="/">I Shall NOT Vote</a>
+    {{else}}
+    <a href="/">Take me to safety</a>
+    {{/if}}
+</form>
+
+<script>
+    let voterid = "{{ voterid }}";
+    $("form").on('submit', (e) => {
+        e.preventDefault();
+    })
+    $("#confirm").click(function (e) {
+        $.post("/voted/" + voterid, {
+            "share": $("input[name=opt-radio]:checked").val()
+        }, function (res, status) {
+            if (status == "success")
+                window.location.href = "/thankyou/v";
+        })
+    })
+</script>

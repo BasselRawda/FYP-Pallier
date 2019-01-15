@@ -1,0 +1,25 @@
+<form class="form">
+    <input type="number" name="electionid" id="electionid" placeholder="Election ID: ">
+    <input type="password" name="password" id="password" placeholder="Password">
+    <a id="confirm">View Results</a>
+    <a href="/">Take me home</a>
+</form>
+
+<script>
+    $("form").on('submit', (e) => {
+        e.preventDefault();
+    })
+    $("#confirm").click(function (e) {
+        $.post("/auth/election", {
+            "electionid": $("#electionid").val(),
+            "password": $("#password").val()
+        }, function (res, status) {
+            if (status == "success")
+                window.location.href = "/results/" + res.electionid;
+            else
+                window.location.href = "/error/results";
+        }).fail(function (xhr) {
+            window.location.href = "/error/results";
+        })
+    })
+</script>

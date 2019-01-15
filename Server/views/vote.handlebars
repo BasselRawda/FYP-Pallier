@@ -1,0 +1,20 @@
+<form class="form wide">
+    <input type="number" placeholder="Ticket ID" id="voterid">
+    <a id="submit">Submit your vote</a>
+    <a href="/" id="home">Take me home</a>
+</form>
+
+<script>
+    $(".form").on("submit", (e) => {
+        e.preventDefault();
+    });
+    $("#submit").on('click', () => {
+        let voterid = $('#voterid').val()
+        $.post("/auth/voter", {
+            "voterid": $("#voterid").val(),
+        }, function (res, status) {
+            if (status == "success")
+                window.location.href = "/vote/" + res.voterid
+        })
+    })
+</script>
